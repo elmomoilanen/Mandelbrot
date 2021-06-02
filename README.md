@@ -2,7 +2,7 @@
 
 A command line program to plot different kind of images of the Mandelbrot set which is consisted of points *c* in complex plane for which the sequence <img src="https://render.githubusercontent.com/render/math?math=z_{n%2B1} = z_{n}^2 %2B c"> remains bounded when iterated from z=0. To plot the set, an optimized escape time algorithm is utilized, in which a color is chosen for every pixel based on the iteration count until the algorithm reached the escape condition or user-defined maximal iteration count. Reaching of this latter threshold is taken as a evidence that the particular point belongs to the Mandelbrot set and the pixel corresponding to the point is then usually colored with black.
 
-The program can be used with its configured default settings or by passing values to allowed options. Read the **Use** section for more information.
+The program can be used with its configured default settings or by command line arguments to modify the settings. Read the **Use** section for more information.
 
 ## Build ##
 
@@ -21,7 +21,13 @@ Usage with default settings is simple
 ./mandelbrot
 ```
 
-To inspect allowed options and their arguments, invoke the following command
+and as a result it would produce a bitmap file with content similar to the following figure
+
+![](docs/fractal_example.png)
+
+Different kind of results can be attained by providing command line arguments. There is a convenient way to see all options the program can take.
+
+To inspect all allowed options and their arguments, invoke the following command
 ```bash
 ./mandelbrot -s
 ```
