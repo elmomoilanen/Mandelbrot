@@ -13,7 +13,7 @@ $(OBJS): $(SRC)
 	$(CC) $(CFLAGS) -c -Isrc/ $(SRC)
 
 $(TARGET): $(OBJS)
-	$(CC) $(OBJS) -o $(TARGET)
+	$(CC) $(OBJS) -o $(TARGET) -lm
 
 clean:
 	rm -f $(OBJS)
