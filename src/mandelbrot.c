@@ -262,21 +262,21 @@ void draw_mandelbrot_fractal(fractal_config *cfg)
     memset(bitmap->pixels, 0, b_pixels);
 
     if (cfg->color_algorithm == 0) {
-        printf("drawing fractal with continuous coloring\n");
+        fprintf(stdout, "drawing fractal with continuous coloring\n");
         _compute_with_continuous_coloring(cfg, bitmap);
 
     } else if (cfg->color_algorithm == 1) {
-        printf("drawing fractal with histogram coloring\n");
+        fprintf(stdout, "drawing fractal with histogram coloring\n");
         _compute_with_histogram_coloring(cfg, bitmap);
 
     } else {
-        printf("drawing the Mandelbrot set in simple manner\n");
+        fprintf(stdout, "drawing the Mandelbrot set in simple manner\n");
         _compute_with_simple_coloring(cfg, bitmap);
     }
 
     bitmap_write(bitmap, "fractal.bmp");
 
-    printf("fractal drawn in file `fractal.bmp`\n");
+    fprintf(stdout, "fractal drawn in file `fractal.bmp`\n");
 
     free(bitmap);
 }

@@ -4,6 +4,7 @@
 #include <errno.h>
 #include <ctype.h>
 #include <unistd.h>
+#include <getopt.h>
 
 #include "argparser.h"
 #include "palette.h"
@@ -192,9 +193,9 @@ fractal_config parse_cmdline_args(int argc, char **argv)
         .max_iters = max_iters,
         .escape_bound = escape_bound,
         .color_algorithm = color_algorithm,
+        .color_palette = {"uf"},
     };
-    if (!palette) strncpy(cfg.color_palette, "uf", 2);
-    else strncpy(cfg.color_palette, palette, 2);
+    if (palette) strcpy(cfg.color_palette, palette);
 
     return cfg;
 }

@@ -11,7 +11,7 @@ typedef struct {
     u32 max_iters;
     u32 escape_bound;
     u32 color_algorithm;
-    char color_palette[2];
+    char color_palette[4];
 } fractal_config;
 
 struct Vector {
