@@ -13,8 +13,8 @@ static bool _alloc_vec_data(struct Vector **vec, u32 data_size)
     (*vec)->data = malloc(data_size * sizeof(u32));
 
     if ((*vec)->data == NULL) {
-        fprintf(stderr, "Error when allocating memory to \
-        data section of a `Vector` struct\n");
+        fprintf(stderr,
+            "Error when allocating memory to data section of a `Vector` struct\n");
 
         return false;
     }
@@ -195,8 +195,8 @@ static void _compute_with_histogram_coloring(fractal_config *cfg, struct BitmapD
     struct Vector *frequency = malloc(sizeof *frequency);
 
     if (iters_per_pixel == NULL || frequency == NULL) {
-        fprintf(stderr, "Error when allocating memory for structs \
-        `iters_per_pixel` and `frequency`\n");
+        fprintf(stderr,
+            "Error when allocating memory for structs `iters_per_pixel` and `frequency`\n");
         goto cleanup;
     }
     if (!_alloc_vec_data(&iters_per_pixel, elems_iters)) {
@@ -208,8 +208,6 @@ static void _compute_with_histogram_coloring(fractal_config *cfg, struct BitmapD
 
     _compute_mandelbrot_set_hist(cfg, iters_per_pixel, frequency);
     _render_coloring_hist(cfg, iters_per_pixel, frequency, bitmap);
-
-    goto cleanup;
 
     cleanup:
         _clean_up_allocs(2, iters_per_pixel, frequency);
