@@ -21,7 +21,7 @@ Notice that for macOS one might need to override the compiler setting from the M
 make CC=clang && make clean
 ```
 
-Target of the Makefile is a `mandelbrot` executable which will be placed directly to the root folder of this program.
+Target of the Makefile is a *mandelbrot* executable which after successful build will be placed directly to the root folder of this program.
 
 ## Use ##
 
