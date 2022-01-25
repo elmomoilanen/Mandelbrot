@@ -26,6 +26,7 @@ Target of the Makefile is a *mandelbrot* executable which after successful build
 ## Use ##
 
 Usage with default settings is simple
+
 ```bash
 ./mandelbrot
 ```
@@ -37,11 +38,19 @@ and as a result it would produce a bitmap file with content similar to the follo
 When providing command line arguments to the *mandelbrot* executable, different kinds of figures can be plotted. There is for example an option which specifies whether the coloring algorithm is continuous (as in the previous figure), histogram or simple which uses just two different colors. There is a convenient way to see all options the program can take.
 
 To inspect all allowed options and their arguments, invoke the following command
+
 ```bash
 ./mandelbrot -s
 ```
 
+and e.g. in order to see all possible arguments for color palettes (-p), passing a certainly not accepted argument value (say, *help*) will return an error message indicating the correct and accepted argument values
+
+```bash
+./mandelbrot -p help
+```
+
 Following command illustrates a case where multiple arguments are passed to the program
+
 ```bash
 ./mandelbrot -a histogram -m 250000 -e 2 -p green
 ```
