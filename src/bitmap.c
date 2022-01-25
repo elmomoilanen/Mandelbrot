@@ -6,8 +6,7 @@
 #include "bitmap.h"
 
 
-void bitmap_set_pixel(struct BitmapData *bitmap, RGBbits *color_bits, i32 x, i32 y)
-{
+void bitmap_set_pixel(struct BitmapData *bitmap, RGBbits *color_bits, i32 x, i32 y) {
     // Pixel array [x,y]: x determines column and y row, each pixel takes three bytes
     i32 const pixel_offset = x * 3 + bitmap->width * y * 3;
 
@@ -16,8 +15,7 @@ void bitmap_set_pixel(struct BitmapData *bitmap, RGBbits *color_bits, i32 x, i32
     *(bitmap->pixels + pixel_offset + 2) = color_bits->red;
 }
 
-void bitmap_write(struct BitmapData *bitmap, const char *filename)
-{
+void bitmap_write(struct BitmapData *bitmap, const char *filename) {
     struct BitmapHeader header = {
         .header_field = {'B', 'M'},
         .file_size = 0,

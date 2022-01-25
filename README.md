@@ -2,7 +2,7 @@
 
 [![main](https://github.com/elmomoilanen/Mandelbrot/actions/workflows/main.yml/badge.svg)](https://github.com/elmomoilanen/Mandelbrot/actions/workflows/main.yml)
 
-A command line program to plot different kind of images of the Mandelbrot set which is consisted of points *c* in the complex plane for which the sequence <img src="https://render.githubusercontent.com/render/math?math=z_{n%2B1} = z_{n}^2 %2B c"> remains bounded when iterated from z=0. To plot the set, an optimized escape time algorithm is utilized, in which a color is chosen for every pixel based on the iteration count until the algorithm reached the escape condition or user-defined maximal iteration count. Reaching of this latter threshold is taken as evidence that the particular point belongs to the Mandelbrot set and the pixel corresponding to the point is then usually colored with black.
+Command line program to plot different kind of images of the Mandelbrot set which is consisted of points *c* in the complex plane for which the sequence <img src="https://render.githubusercontent.com/render/math?math=z_{n%2B1} = z_{n}^2 %2B c"> remains bounded when iterated from z=0. To plot the set, an optimized escape time algorithm is utilized, in which a color is chosen for every pixel based on the iteration count until the algorithm reached the escape condition or user-defined maximal iteration count. Reaching of this latter threshold is taken as evidence that the particular point belongs to the Mandelbrot set and the pixel corresponding to the point is then usually colored with black.
 
 This program can be used with its configured default settings or by providing command line arguments, these settings can be modified. Read the **Use** section below for more information.
 
@@ -34,7 +34,7 @@ and as a result it would produce a bitmap file with content similar to the follo
 
 ![](docs/fractal_example.png)
 
-Different kind of results can be achieved by providing command line arguments. There is for example an option which specifies whether the coloring algorithm is continuous (as in the previous figure), histogram or simple which uses just two different colors. There is a convenient way to see all options the program can take.
+When providing command line arguments to the *mandelbrot* executable, different kinds of figures can be plotted. There is for example an option which specifies whether the coloring algorithm is continuous (as in the previous figure), histogram or simple which uses just two different colors. There is a convenient way to see all options the program can take.
 
 To inspect all allowed options and their arguments, invoke the following command
 ```bash

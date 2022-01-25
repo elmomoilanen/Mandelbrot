@@ -6,9 +6,7 @@
 #include "argparser.h"
 #include "mandelbrot.h"
 
-
-int main(int argc, char **argv)
-{
+int main(int argc, char **argv) {
     fractal_config cfg_from_args = parse_cmdline_args(argc, argv);
 
     // define default settings that might be overriden

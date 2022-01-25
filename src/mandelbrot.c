@@ -8,8 +8,7 @@
 #include "palette.h"
 
 
-static bool _alloc_vec_data(struct Vector **vec, u32 data_size)
-{
+static bool _alloc_vec_data(struct Vector **vec, u32 data_size) {
     (*vec)->data = malloc(data_size * sizeof(u32));
 
     if ((*vec)->data == NULL) {
@@ -25,8 +24,7 @@ static bool _alloc_vec_data(struct Vector **vec, u32 data_size)
     return true;
 }
 
-static void _clean_up_allocs(u32 items, void *ptr, ...)
-{
+static void _clean_up_allocs(u32 items, void *ptr, ...) {
     va_list args;
 
     free(ptr);
@@ -41,8 +39,7 @@ static void _clean_up_allocs(u32 items, void *ptr, ...)
 }
 
 
-static u32 _compute_escape_time(CPoint *c, CPoint *z, fractal_config *cfg)
-{
+static u32 _compute_escape_time(CPoint *c, CPoint *z, fractal_config *cfg) {
     f64 const x_off = c->x - 0.25;
     f64 const y_squared = c->y * c->y;
     f64 const q = x_off * x_off + y_squared;
@@ -78,8 +75,7 @@ static u32 _compute_escape_time(CPoint *c, CPoint *z, fractal_config *cfg)
 }
 
 
-static void _compute_with_continuous_coloring(fractal_config *cfg, struct BitmapData *bitmap)
-{
+static void _compute_with_continuous_coloring(fractal_config *cfg, struct BitmapData *bitmap) {
     f64 const reciprocal_of_ln2 = 1.0 / log(2.0);
     f64 const multip = log(0.5) * reciprocal_of_ln2;
 
@@ -186,8 +182,7 @@ static void _render_coloring_hist(
 
 }
 
-static void _compute_with_histogram_coloring(fractal_config *cfg, struct BitmapData *bitmap)
-{
+static void _compute_with_histogram_coloring(fractal_config *cfg, struct BitmapData *bitmap) {
     u32 const elems_iters = cfg->height * cfg->width;
     struct Vector *iters_per_pixel = malloc(sizeof *iters_per_pixel);
 
@@ -214,8 +209,7 @@ static void _compute_with_histogram_coloring(fractal_config *cfg, struct BitmapD
 }
 
 
-static void _compute_with_simple_coloring(fractal_config *cfg, struct BitmapData *bitmap)
-{
+static void _compute_with_simple_coloring(fractal_config *cfg, struct BitmapData *bitmap) {
     for (i32 y=0; y<cfg->height; ++y) {
         for (i32 x=0; x<cfg->width; ++x) {
             // scale x to [-2, 0.5], y to [-1,1]
@@ -245,8 +239,7 @@ static void _compute_with_simple_coloring(fractal_config *cfg, struct BitmapData
 }
 
 
-void draw_mandelbrot_fractal(fractal_config *cfg)
-{
+void draw_mandelbrot_fractal(fractal_config *cfg) {
     u32 const b_pixels = cfg->width * cfg->height * 3; // 3 bytes for each pixel
     struct BitmapData *bitmap = malloc(sizeof *bitmap + b_pixels * sizeof(u8));
 

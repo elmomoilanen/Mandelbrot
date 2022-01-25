@@ -20,8 +20,7 @@ palette_map pmap[] = {
     {.name = "uf", .long_name = "ultrafractal"},
 };
 
-static u64 _parse_to_numeric(char *arg, char *name)
-{
+static u64 _parse_to_numeric(char *arg, char *name) {
     char *extra;
     errno = 0;
 
@@ -65,8 +64,7 @@ static u64 _parse_to_numeric(char *arg, char *name)
     return num;
 }
 
-static u32 _parse_color_algorithm(char *arg)
-{
+static u32 _parse_color_algorithm(char *arg) {
     u32 const options = COLOR_ALGORITHMS;
     const char *opts[] = {"continuous", "histogram", "simple"};
 
@@ -89,8 +87,7 @@ static u32 _parse_color_algorithm(char *arg)
 }
 
 
-static char* _parse_color_palette(char *arg)
-{
+static char* _parse_color_palette(char *arg) {
     u32 const options = COLOR_PALETTES;
 
     for (u32 i=0; i<options; ++i) {
@@ -111,8 +108,7 @@ static char* _parse_color_palette(char *arg)
     return NULL;
 }
 
-static void _print_args_description()
-{
+static void _print_args_description() {
     fprintf(stdout, "Allowed command line options and descriptions of their arguments:\n\n");
     fprintf(stdout, "[-w width]: width of the plotted image, in pixels\n");
     fprintf(stdout, "[-h height]: height of the plotted image, in pixels\n");
@@ -122,8 +118,7 @@ static void _print_args_description()
     fprintf(stdout, "[-p color_palette]: name of the color palette to be used in coloring\n");
 }
 
-fractal_config parse_cmdline_args(int argc, char **argv)
-{
+fractal_config parse_cmdline_args(int argc, char **argv) {
     i32 width = 0, height = 0;
     u32 max_iters = 0, escape_bound = 0;
     u32 color_algorithm = 0;
