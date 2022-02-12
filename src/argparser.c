@@ -57,7 +57,7 @@ static u64 _parse_to_numeric(char *arg, char *name) {
         }
     } else {
         // should not end up here
-        fprintf(stderr, "Unknown option %s\n", name);
+        fprintf(stderr, "Unknown option `%s`\n", name);
         return 0;
     }
 

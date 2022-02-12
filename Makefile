@@ -13,7 +13,7 @@ $(OBJS): $(SRC)
 	$(CC) $(CFLAGS) -c -Isrc/ $(SRC)
 
 $(TARGET): $(OBJS)
-	$(CC) $(OBJS) -o $(TARGET) -lm
+	$(CC) $(OBJS) -o $(TARGET) -lm -lpthread
 
 clean:
 	rm -f $(OBJS)

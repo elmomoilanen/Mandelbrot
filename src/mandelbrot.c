@@ -3,6 +3,7 @@
 #include <string.h>
 #include <stdarg.h>
 #include <math.h>
+#include <pthread.h>
 
 #include "mandelbrot.h"
 #include "palette.h"
@@ -63,6 +64,7 @@ static u32 _compute_escape_time(CPoint *c, CPoint *z, fractal_config *cfg) {
     }
 
     if (cfg->color_algorithm == 0) {
+        // make few further iterations, continuous coloring
         for (u32 j=0; j<4; ++j) {
             y = 2 * x * y + c->y;
             x = z->x - z->y + c->x;
@@ -75,26 +77,40 @@ static u32 _compute_escape_time(CPoint *c, CPoint *z, fractal_config *cfg) {
 }
 
 
-static void _compute_with_continuous_coloring(fractal_config *cfg, struct BitmapData *bitmap) {
+struct ThreadDataCont {
+    fractal_config *cfg;
+    struct BitmapData *bitmap;
+    i32 start_y;
+};
+
+static void* _cont_color_worker(void *thread_args) {
+    struct ThreadDataCont *args = thread_args;
+
     f64 const reciprocal_of_ln2 = 1.0 / log(2.0);
     f64 const multip = log(0.5) * reciprocal_of_ln2;
 
-    palette_t color_palette = get_palette(cfg->color_palette);
+    palette_t color_palette = get_palette(args->cfg->color_palette);
 
-    for (i32 y=0; y<cfg->height; ++y) {
-        for (i32 x=0; x<cfg->width; ++x) {
-            // scale x to [-2, 0.5], y to [-1,1]
-            f64 x_scaled = (x - (4 * cfg->width / 5)) * 5.0 / (2.0 * cfg->width);
-            f64 y_scaled = (y - cfg->height / 2) * 2.0 / cfg->height;
+    i32 end_y = args->cfg->height;
+    if (args->start_y == 0) {
+        // thread 1, fix end boundary
+        end_y /= 2;
+    }
+
+    for (i32 y=args->start_y; y<end_y; ++y) {
+        for (i32 x=0; x<args->cfg->width; ++x) {
+            // scale x to [-2, 0.5], y to [-1, 1]
+            f64 x_scaled = (x - (4 * args->cfg->width / 5)) * 5.0 / (2.0 * args->cfg->width);
+            f64 y_scaled = (y - args->cfg->height / 2) * 2.0 / args->cfg->height;
 
             CPoint c = {.x = x_scaled, .y = y_scaled};
             CPoint z = {0};
 
-            u32 const iter_count = _compute_escape_time(&c, &z, cfg);
+            u32 const iter_count = _compute_escape_time(&c, &z, args->cfg);
 
             RGBbits color_bits = {0};
 
-            if (iter_count < cfg->max_iters) {
+            if (iter_count < args->cfg->max_iters) {
                 f64 const iter_f = 5 + iter_count - log(log(z.x + z.y)) * reciprocal_of_ln2 - multip;
 
                 u32 const iter_u = floor(iter_f);
@@ -108,35 +124,88 @@ static void _compute_with_continuous_coloring(fractal_config *cfg, struct Bitmap
                 color_bits.blue = (end_color.blue - start_color.blue) * iter_p + start_color.blue;
             }
 
-            bitmap_set_pixel(bitmap, &color_bits, x, y);
+            // threads never write to same memory, thus no mutex here
+            bitmap_set_pixel(args->bitmap, &color_bits, x, y);
         }
     }
+
+    return NULL;
 }
 
+static void _compute_with_continuous_coloring(fractal_config *cfg, struct BitmapData *bitmap) {
+    pthread_t thread_1, thread_2;
+
+    pthread_create(&thread_1, NULL, _cont_color_worker,
+        &(struct ThreadDataCont){.cfg=cfg, .bitmap=bitmap, .start_y=0});
+
+    pthread_create(&thread_2, NULL, _cont_color_worker,
+        &(struct ThreadDataCont){.cfg=cfg, .bitmap=bitmap, .start_y=cfg->height / 2});
+
+    pthread_join(thread_1, NULL);
+    pthread_join(thread_2, NULL);
+}
+
+
+struct ThreadDataHist {
+    fractal_config *cfg;
+    struct Vector *iters_per_pixel;
+    struct Vector *frequency;
+    i32 start_y;
+};
+
+pthread_mutex_t mutex_hist = PTHREAD_MUTEX_INITIALIZER;
+
+static void* _hist_worker(void *thread_args) {
+    struct ThreadDataHist *args = thread_args;
+
+    i32 end_y = args->cfg->height;
+    if (args->start_y == 0) {
+        // thread 1, fix end boundary
+        end_y /= 2;
+    }
+
+    for (i32 y=args->start_y; y<end_y; ++y) {
+        for (i32 x=0; x<args->cfg->width; ++x) {
+            // scale x to [-2, 0.5], y to [-1,1]
+            f64 x_scaled = (x - (4 * args->cfg->width / 5)) * 5.0 / (2.0 * args->cfg->width);
+            f64 y_scaled = (y - args->cfg->height / 2) * 2.0 / args->cfg->height;
+
+            CPoint c = {.x = x_scaled, .y = y_scaled};
+            CPoint z = {0};
+
+            u32 const iter_count = _compute_escape_time(&c, &z, args->cfg);
+
+            args->iters_per_pixel->data[x + y * args->cfg->width] = iter_count;
+
+            if (iter_count < args->cfg->max_iters) {
+                pthread_mutex_lock(&mutex_hist);
+
+                args->frequency->data[iter_count] += 1;
+                pthread_mutex_unlock(&mutex_hist);
+            }
+        }
+    }
+
+    return NULL;
+}
 
 static void _compute_mandelbrot_set_hist(
     fractal_config *cfg,
     struct Vector *iters_per_pixel,
     struct Vector *frequency)
 {
-    for (i32 y=0; y<cfg->height; ++y) {
-        for (i32 x=0; x<cfg->width; ++x) {
-            // scale x to [-2, 0.5], y to [-1,1]
-            f64 x_scaled = (x - (4 * cfg->width / 5)) * 5.0 / (2.0 * cfg->width);
-            f64 y_scaled = (y - cfg->height / 2) * 2.0 / cfg->height;
+    pthread_t thread_1, thread_2;
 
-            CPoint c = {.x = x_scaled, .y = y_scaled};
-            CPoint z = {0};
+    pthread_create(&thread_1, NULL, _hist_worker,
+        &(struct ThreadDataHist)
+        {.cfg=cfg, .iters_per_pixel=iters_per_pixel, .frequency=frequency, .start_y=0});
 
-            u32 const iter_count = _compute_escape_time(&c, &z, cfg);
+    pthread_create(&thread_2, NULL, _hist_worker,
+        &(struct ThreadDataHist)
+        {.cfg=cfg, .iters_per_pixel=iters_per_pixel, .frequency=frequency, .start_y=cfg->height / 2});
 
-            iters_per_pixel->data[x + y * cfg->width] = iter_count;
-
-            if (iter_count < cfg->max_iters) {
-                frequency->data[iter_count] += 1;
-            }
-        }
-    }
+    pthread_join(thread_1, NULL);
+    pthread_join(thread_2, NULL);
 }
 
 static void _render_coloring_hist(
@@ -209,21 +278,29 @@ static void _compute_with_histogram_coloring(fractal_config *cfg, struct BitmapD
 }
 
 
-static void _compute_with_simple_coloring(fractal_config *cfg, struct BitmapData *bitmap) {
-    for (i32 y=0; y<cfg->height; ++y) {
-        for (i32 x=0; x<cfg->width; ++x) {
+static void* _simple_worker(void *thread_args) {
+    struct ThreadDataCont *args = thread_args;
+
+    i32 end_y = args->cfg->height;
+    if (args->start_y == 0) {
+        // thread 1, fix end boundary
+        end_y /= 2;
+    }
+
+    for (i32 y=args->start_y; y<end_y; ++y) {
+        for (i32 x=0; x<args->cfg->width; ++x) {
             // scale x to [-2, 0.5], y to [-1,1]
-            f64 x_scaled = (x - (4 * cfg->width / 5)) * 5.0 / (2.0 * cfg->width);
-            f64 y_scaled = (y - cfg->height / 2) * 2.0 / cfg->height;
+            f64 x_scaled = (x - (4 * args->cfg->width / 5)) * 5.0 / (2.0 * args->cfg->width);
+            f64 y_scaled = (y - args->cfg->height / 2) * 2.0 / args->cfg->height;
 
             CPoint c = {.x = x_scaled, .y = y_scaled};
             CPoint z = {0};
 
-            u32 const iter_count = _compute_escape_time(&c, &z, cfg);
+            u32 const iter_count = _compute_escape_time(&c, &z, args->cfg);
 
             RGBbits color_bits = {0};
 
-            if (iter_count < cfg->max_iters) {
+            if (iter_count < args->cfg->max_iters) {
                 color_bits.red = 255;
                 color_bits.green = 255;
                 color_bits.blue = 255;
@@ -233,9 +310,25 @@ static void _compute_with_simple_coloring(fractal_config *cfg, struct BitmapData
                 color_bits.blue = 96;
             }
 
-            bitmap_set_pixel(bitmap, &color_bits, x, y);
+            // threads never write to same memory, thus no mutex here
+            bitmap_set_pixel(args->bitmap, &color_bits, x, y);
         }
     }
+
+    return NULL;
+}
+
+static void _compute_with_simple_coloring(fractal_config *cfg, struct BitmapData *bitmap) {
+    pthread_t thread_1, thread_2;
+
+    pthread_create(&thread_1, NULL, _simple_worker,
+        &(struct ThreadDataCont){.cfg=cfg, .bitmap=bitmap, .start_y=0});
+
+    pthread_create(&thread_2, NULL, _simple_worker,
+        &(struct ThreadDataCont){.cfg=cfg, .bitmap=bitmap, .start_y=cfg->height / 2});
+
+    pthread_join(thread_1, NULL);
+    pthread_join(thread_2, NULL);
 }
 
 
@@ -261,7 +354,7 @@ void draw_mandelbrot_fractal(fractal_config *cfg) {
         _compute_with_histogram_coloring(cfg, bitmap);
 
     } else {
-        fprintf(stdout, "drawing the Mandelbrot set in simple manner\n");
+        fprintf(stdout, "drawing the Mandelbrot set in a simple manner\n");
         _compute_with_simple_coloring(cfg, bitmap);
     }
 

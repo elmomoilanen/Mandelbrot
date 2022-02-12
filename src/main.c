@@ -6,6 +6,7 @@
 #include "argparser.h"
 #include "mandelbrot.h"
 
+
 int main(int argc, char **argv) {
     fractal_config cfg_from_args = parse_cmdline_args(argc, argv);
 
@@ -32,9 +33,9 @@ int main(int argc, char **argv) {
         strcpy(cfg.color_palette, cfg_from_args.color_palette);
     }
 
-    fprintf(stdout, "Plotting Mandelbrot set with following parameters:\n");
+    fprintf(stdout, "Plotting Mandelbrot set with the following parameters:\n");
     fprintf(stdout, "width: %i\n", cfg.width);
-    fprintf(stdout, "heigth: %i\n", cfg.height);
+    fprintf(stdout, "height: %i\n", cfg.height);
     fprintf(stdout, "max iterations: %u\n", cfg.max_iters);
     fprintf(stdout, "escape bound: %u\n", cfg.escape_bound);
 

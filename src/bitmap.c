@@ -41,7 +41,7 @@ void bitmap_write(struct BitmapData *bitmap, const char *filename) {
     file = fopen(filename, "wb");
 
     if (file == NULL) {
-        fprintf(stderr, "Error when opening file %s\n", filename);
+        fprintf(stderr, "Error when opening file `%s`\n", filename);
         return;
     }
 
@@ -50,9 +50,9 @@ void bitmap_write(struct BitmapData *bitmap, const char *filename) {
 
     if (fclose(file) != 0) {
         if (errno) {
-            fprintf(stderr, "Error when closing the file %s: %s\n", filename, strerror(errno));
+            fprintf(stderr, "Error when closing the file `%s`: %s\n", filename, strerror(errno));
         } else {
-            fprintf(stderr, "Unknown error when closing the file %s\n", filename);
+            fprintf(stderr, "Unknown error when closing the file `%s`\n", filename);
         }
     }
 }
