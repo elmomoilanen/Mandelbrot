@@ -31,7 +31,7 @@ Usage with default settings is simple
 ./mandelbrot
 ```
 
-and as a result it would produce a bitmap file with content similar to the following figure
+and as a result it would produce a bitmap file with content similar to the following figure (default size 800 x 600 pixels)
 
 ![](docs/fractal_example.png)
 
@@ -56,3 +56,7 @@ Following command illustrates a case where multiple arguments are passed to the 
 ```
 
 It would plot the Mandelbrot set with the histogram coloring algorithm using 250000 as the maximal iteration count and two as a value for the escape bound. In addition, a coloring palette "green" would be used.
+
+Next figure represents a result from running the histogram coloring algorithm
+
+![](docs/fractal_example2.png)
