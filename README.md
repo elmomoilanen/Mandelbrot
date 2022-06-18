@@ -2,7 +2,7 @@
 
 [![main](https://github.com/elmomoilanen/Mandelbrot/actions/workflows/main.yml/badge.svg)](https://github.com/elmomoilanen/Mandelbrot/actions/workflows/main.yml)
 
-Command line program to plot different kind of images of the Mandelbrot set which is consisted of points *c* in the complex plane for which the sequence <img src="https://render.githubusercontent.com/render/math?math=z_{n%2B1} = z_{n}^2 %2B c"> remains bounded when iterated from z=0. To plot the set, an optimized escape time algorithm is utilized, in which a color is chosen for every pixel based on the iteration count until the algorithm reached the escape condition or user-defined maximal iteration count. Reaching of this latter threshold is taken as evidence that the particular point belongs to the Mandelbrot set and the pixel corresponding to the point is then usually colored with black.
+Command line program to plot different kind of images of the Mandelbrot set which is consisted of points *c* in the complex plane for which the sequence $$z_{n+1} = z_{n}^2 + c$$ remains bounded when iterated from z=0. To plot the set, an optimized escape time algorithm is utilized, in which a color is chosen for every pixel based on the iteration count until the algorithm reached the escape condition or user-defined maximal iteration count. Reaching of this latter threshold is taken as evidence that the particular point belongs to the Mandelbrot set and the pixel corresponding to the point is then usually colored with black.
 
 This program can be used with its configured default settings or by providing command line arguments, these settings can be modified. Read the **Use** section below for more information.
 
