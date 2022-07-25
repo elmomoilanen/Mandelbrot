@@ -109,13 +109,13 @@ static char* _parse_color_palette(char *arg) {
 }
 
 static void _print_args_description() {
-    fprintf(stdout, "Allowed command line options and descriptions of their arguments:\n\n");
-    fprintf(stdout, "[-w width]: width of the plotted image, in pixels\n");
-    fprintf(stdout, "[-h height]: height of the plotted image, in pixels\n");
-    fprintf(stdout, "[-m max_iters]: maximal iteration count for escape time algorithm, non-negative integer\n");
-    fprintf(stdout, "[-e escape_bound]: escape radius for escape time algorithm, non-negative integer\n");
-    fprintf(stdout, "[-a coloring_algorithm]: algorithm to be used for coloring of the set\n");
-    fprintf(stdout, "[-p color_palette]: name of the color palette to be used in coloring\n");
+    fprintf(stdout, "Allowed command line options and descriptions of their arguments (default value)\n\n");
+    fprintf(stdout, "[-w width]: width of the image, in pixels (800)\n");
+    fprintf(stdout, "[-h height]: height of the image, in pixels (600)\n");
+    fprintf(stdout, "[-m max_iters]: max iterations for escape time algorithm, non-negative integer (100 000)\n");
+    fprintf(stdout, "[-e escape_bound]: escape radius for escape time algorithm, non-negative integer (256)\n");
+    fprintf(stdout, "[-a coloring_algorithm]: continuous, histogram or simple (continuous)\n");
+    fprintf(stdout, "[-p color_palette]: orange, lightblue, red, green or ultrafractal (ultrafractal)\n");
 }
 
 fractal_config parse_cmdline_args(int argc, char **argv) {

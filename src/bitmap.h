@@ -9,16 +9,16 @@
 struct BitmapHeader {
     char header_field[2];
     i32 file_size;
-    i32 reserved;
+    i32 reserved; // set to 0
     i32 data_offset;
-    i32 header_size; // size of `BITMAPINFOHEADER`
+    i32 header_size; // 40 bytes, rest fields this included
     i32 width;
     i32 height;
     i16 color_planes; // set to 1
     i16 bits_per_pixel; // 24 for RGB
     i32 compression; // set to 0 if no compression
     i32 image_size; // set to 0 for RGB bitmaps
-    i32 horizontal_resolution;
+    i32 horizontal_resolution; // print resolution, pixels/metre
     i32 vertical_resolution;
     i32 colors; // set to 0
     i32 important_colors; // set to 0

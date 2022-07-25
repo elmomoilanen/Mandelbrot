@@ -33,7 +33,7 @@ static void _clean_up_allocs(u32 items, void *ptr, ...) {
 
     for (u32 i=1; i<items; ++i) {
         void *p = va_arg(args, void *);
-        if (p) free(p);
+        if (p != NULL) free(p);
     }
 
     va_end(args);
