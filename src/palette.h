@@ -28,7 +28,6 @@ typedef struct {
     char *long_name;
 } palette_map;
 
-
 palette_t get_palette(char *name);
 
 #endif // __PALETTE__

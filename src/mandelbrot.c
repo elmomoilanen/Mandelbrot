@@ -8,7 +8,6 @@
 #include "mandelbrot.h"
 #include "palette.h"
 
-
 static bool _alloc_vec_data(struct Vector **vec, u32 data_size) {
     (*vec)->data = malloc(data_size * sizeof(u32));
 

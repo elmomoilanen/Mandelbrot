@@ -3,7 +3,6 @@
 
 #include "common.h"
 
-
 #pragma pack(push, 2)
 
 struct BitmapHeader {
@@ -31,7 +30,6 @@ struct BitmapData {
     i32 height;
     u8 pixels[];
 };
-
 
 void bitmap_set_pixel(struct BitmapData *bitmap, RGBbits *color_bits, i32 x, i32 y);
 void bitmap_write(struct BitmapData *bitmap, const char *filename);

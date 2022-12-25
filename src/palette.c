@@ -2,7 +2,6 @@
 
 #include "palette.h"
 
-
 RGB palette_uf[] = {
     {.red = 66.0, .green = 30.0, .blue = 15.0},
     {.red = 25.0, .green = 7.0, .blue = 26.0},
@@ -76,7 +75,6 @@ RGB palette_gr[] = {
     {.red = 50.0, .green = 205.0, .blue = 50.0},
     {.red = 143.0, .green = 188.0, .blue = 143.0},
 };
-
 
 palette_t get_palette(char *name) {
     palette_t palette = {0};

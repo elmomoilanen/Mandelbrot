@@ -5,7 +5,6 @@
 
 #include "bitmap.h"
 
-
 void bitmap_set_pixel(struct BitmapData *bitmap, RGBbits *color_bits, i32 x, i32 y) {
     // Pixel array [x,y]: x (< width) determines column and y (< height) row, three bytes per pixel
     i32 const pixel_offset = x * 3 + bitmap->width * y * 3;

@@ -6,5 +6,4 @@
 
 fractal_config parse_cmdline_args(int argc, char **argv);
 
-
 #endif // __ARGPARSER__

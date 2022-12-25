@@ -4,7 +4,6 @@
 #include "common.h"
 #include "bitmap.h"
 
-
 typedef struct {
     i32 width;
     i32 height;
@@ -23,7 +22,6 @@ typedef struct {
     f64 x;
     f64 y;
 } CPoint;
-
 
 void draw_mandelbrot_fractal(fractal_config *cfg);
 
