@@ -23,7 +23,7 @@ Target of the Makefile is a *mandelbrot* executable which after successful build
 
 ## Use ##
 
-Usage with default parameters is simple
+Usage with default parameters is simple from the command line
 
 ```bash
 ./mandelbrot
@@ -35,7 +35,7 @@ and as a result it would produce a bitmap file with content similar to the follo
 
 Several parameter options can be given to override the defaults. There is for example an option which specifies whether the coloring algorithm is continuous (as in the previous figure), histogram or simple which uses just two different colors. There is a convenient way to see all options the program can take.
 
-To inspect all allowed options and short descriptions of their arguments, invoke the following command
+To inspect all allowed options and short descriptions of their arguments, run the following command
 
 ```bash
 ./mandelbrot -s
