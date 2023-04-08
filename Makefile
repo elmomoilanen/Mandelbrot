@@ -5,7 +5,7 @@ SRC=src/bitmap.c src/main.c src/mandelbrot.c src/palette.c src/argparser.c
 OBJS=bitmap.o main.o mandelbrot.o palette.o argparser.o
 TARGET=mandelbrot
 
-.PHONY:all clean
+.PHONY: all clean help
 
 all: $(TARGET)
 
@@ -17,3 +17,9 @@ $(TARGET): $(OBJS)
 
 clean:
 	rm -f $(OBJS)
+
+help:
+	@echo "Available targets:"
+	@echo "  all:       Build executable"
+	@echo "  clean:     Remove object files"
+	@echo "  help:      Display this help message"
