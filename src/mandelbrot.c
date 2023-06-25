@@ -63,7 +63,7 @@ static u32 _compute_escape_time(CPoint *c, CPoint *z, fractal_config *cfg) {
     }
 
     if (cfg->color_algorithm == 0) {
-        // make few further iterations, continuous coloring
+        // continuous coloring: make few further iterations
         for (u32 j=0; j<4; ++j) {
             y = 2 * x * y + c->y;
             x = z->x - z->y + c->x;
@@ -123,7 +123,7 @@ static void* _cont_color_worker(void *thread_args) {
                 color_bits.blue = (end_color.blue - start_color.blue) * iter_p + start_color.blue;
             }
 
-            // threads never write to same memory, thus no mutex here
+            // threads never write to the same memory, thus no mutex here
             bitmap_set_pixel(args->bitmap, &color_bits, x, y);
         }
     }
@@ -309,7 +309,7 @@ static void* _simple_worker(void *thread_args) {
                 color_bits.blue = 96;
             }
 
-            // threads never write to same memory, thus no mutex here
+            // threads never write to the same memory, thus no mutex here
             bitmap_set_pixel(args->bitmap, &color_bits, x, y);
         }
     }

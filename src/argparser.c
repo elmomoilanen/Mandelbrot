@@ -56,7 +56,6 @@ static u64 _parse_to_numeric(char *arg, char *name) {
             return 0;
         }
     } else {
-        // should not end up here
         fprintf(stderr, "Unknown option `%s`\n", name);
         return 0;
     }
@@ -152,11 +151,9 @@ fractal_config parse_cmdline_args(int argc, char **argv) {
             palette = _parse_color_palette(optarg);
             if (!palette) exit(EXIT_FAILURE);
             break;
-
         case 's':
             _print_args_description();
             exit(EXIT_SUCCESS);
-
         case '?':
             if (optopt == 'w' || optopt == 'h' || optopt == 'm' || optopt == 'e') {
                 fprintf(stderr, "Option -%c requires an argument.\n", optopt);
@@ -170,14 +167,10 @@ fractal_config parse_cmdline_args(int argc, char **argv) {
             else {
                 fprintf(stderr, "Unknown option char `\\x%x`.\n", optopt);
             }
-
             fprintf(stderr, "\nUsage: %s [-w width] [-h height] [-m max_iters] ", argv[0]);
             fprintf(stderr, "[-e escape_bound] [-a coloring_algorithm] [-p color_palette]\n");
-
             exit(EXIT_FAILURE);
-
         default:
-            // should not end up here
             exit(EXIT_FAILURE);
         }
     }

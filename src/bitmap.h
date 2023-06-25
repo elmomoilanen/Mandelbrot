@@ -10,7 +10,7 @@ struct BitmapHeader {
     i32 file_size;
     i32 reserved; // set to 0
     i32 data_offset;
-    i32 header_size; // 40 bytes, rest fields this included
+    i32 header_size; // 40 bytes, rest of the fields this included
     i32 width;
     i32 height;
     i16 color_planes; // set to 1

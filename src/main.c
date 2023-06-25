@@ -10,7 +10,6 @@
 int main(int argc, char **argv) {
     fractal_config cfg_from_args = parse_cmdline_args(argc, argv);
 
-    // define default settings that might be overriden
     fractal_config cfg = {
         .width = 800,
         .height = 600,
@@ -29,7 +28,6 @@ int main(int argc, char **argv) {
     if (cfg_from_args.color_algorithm > 0) cfg.color_algorithm = cfg_from_args.color_algorithm;
 
     if (strncmp(cfg_from_args.color_palette, cfg.color_palette, 2) != 0) {
-        // color palette differs from default "uf"
         strcpy(cfg.color_palette, cfg_from_args.color_palette);
     }
 
