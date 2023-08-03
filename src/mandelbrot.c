@@ -8,7 +8,8 @@
 #include "palette.h"
 
 static bool _alloc_vec_data(struct Vector **vec, u32 data_size) {
-    (*vec)->data = malloc(data_size * sizeof(u32));
+    u32 const alloc_size = data_size * sizeof(data_size);
+    (*vec)->data = malloc(alloc_size);
 
     if ((*vec)->data == NULL) {
         fprintf(
@@ -19,7 +20,7 @@ static bool _alloc_vec_data(struct Vector **vec, u32 data_size) {
     }
 
     (*vec)->size = data_size;
-    memset((*vec)->data, 0, data_size);
+    memset((*vec)->data, 0, alloc_size);
 
     return true;
 }
@@ -338,7 +339,7 @@ bool draw_mandelbrot_fractal(fractal_config *cfg) {
 
     bitmap->height = cfg->height;
     bitmap->width = cfg->width;
-    memset(bitmap->pixels, 0, b_pixels);
+    memset(bitmap->pixels, 0, b_pixels * sizeof(u8));
 
     bool compute_success = false;
 
