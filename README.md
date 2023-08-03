@@ -2,19 +2,19 @@
 
 [![main](https://github.com/elmomoilanen/Mandelbrot/actions/workflows/main.yml/badge.svg)](https://github.com/elmomoilanen/Mandelbrot/actions/workflows/main.yml)
 
-Command line program to draw the Mandelbrot set with various parameter options. Mandelbrot set consists of points *c* in the complex plane for which the sequence $$z_{n+1} = z_{n}^2 + c$$ remains bounded when iterated from z=0. To plot the set, an optimized escape time algorithm is utilized, in which a color is chosen for every pixel based on the iteration count until the algorithm reached the escape condition or user-defined maximal iteration count. Reaching of this latter threshold is taken as evidence that the particular point belongs to the Mandelbrot set and the pixel corresponding to the point is then usually colored with black.
+This is a command-line program designed to draw the Mandelbrot set with various parameter options. The Mandelbrot set consists of points *c* in the complex plane for which the sequence $$z_{n+1} = z_{n}^2 + c$$ remains bounded when iterated from z=0. To plot the set, an optimized escape time algorithm is utilized. It chooses a color for every pixel based on the iteration count until the algorithm reaches the escape condition or user-defined maximal iteration count. Reaching this latter threshold is taken as evidence that the particular point belongs to the Mandelbrot set, and the corresponding pixel is usually colored black.
 
 ## Build ##
 
-Expected to work on most common Linux distros and macOS. Program uses the C11 standard and math and posix thread libraries.
+It is expected to work on most common Linux distros and macOS. The program uses the C11 standard and links with math and posix thread libraries.
 
-To build the program, and afterwards clean up unneeded object files, run the following command
+To build the program and clean up unneeded object files afterward, run the following command
 
 ```bash
 make && make clean
 ```
 
-If the build is successful, `mandelbrot` executable will be created in the current directory.
+If the build is successful, the `mandelbrot` executable will be created in the current directory.
 
 ## Usage ##
 
@@ -24,11 +24,11 @@ Usage with default parameters is simple from command line
 ./mandelbrot
 ```
 
-and this command produces a bitmap file with content similar to the following figure (default size 800 x 600 pixels)
+and this command produces a bitmap file with content similar to the figure below (default size 800 x 600 pixels)
 
-![](docs/fractal_example.png)
+![](docs/fractal_cont.png)
 
-Several parameter options can be given to override the defaults. There is for example an option which specifies whether the coloring algorithm is continuous (as in the previous figure), histogram or simple which uses just two different colors. There is a convenient way to see all options the program can take.
+Several parameter options can be given to override the defaults. For example, there is an option that specifies whether the coloring algorithm is continuous (as in the previous figure), histogram or simple, which uses just two different colors. There is a convenient way to see all the options the program can take.
 
 To see all allowed options and short descriptions of their arguments, run the following command
 
@@ -36,14 +36,14 @@ To see all allowed options and short descriptions of their arguments, run the fo
 ./mandelbrot -s
 ```
 
-There are few restrictions for parameter combinations. Histogram coloring algorithm can be used only with color options red, green and blue. Simple algorithm (-a simple) does not use the color option (-p) at all.
+There are few restrictions on parameter combinations. The histogram coloring algorithm can only be used with the color options red, green and blue. The simple algorithm (-a simple) does not use the color option (-p) at all.
 
-Next command example illustrates a case where multiple arguments are passed to the executable. It plots the Mandelbrot set with the histogram coloring algorithm using 250 000 as the maximal iteration count and two as a value for the escape bound. In addition, a coloring palette "red" is used.
+The next example command illustrates a case where multiple arguments are passed to the executable. It plots the Mandelbrot set on a 1920 x 1080 pixel canvas using the histogram coloring algorithm with a maximum iteration count of 250,000 and a red color palette.
 
 ```bash
-./mandelbrot -a histogram -m 250000 -e 2 -p red
+./mandelbrot -a histogram -m 250000 -p red -w 1980 -h 1080
 ```
 
-Following figure represents a possible result from the previous command
+The figure below (not to scale) represents a possible result from the previous command
 
-![](docs/fractal_example2.png)
+![](docs/fractal_hist.png)
