@@ -23,6 +23,6 @@ typedef struct {
     f64 y;
 } CPoint;
 
-void draw_mandelbrot_fractal(fractal_config *cfg);
+bool draw_mandelbrot_fractal(fractal_config *cfg);
 
 #endif // __MANDELBROT__

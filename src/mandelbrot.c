@@ -1,7 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#include <stdarg.h>
 #include <math.h>
 #include <pthread.h>
 
@@ -12,9 +11,10 @@ static bool _alloc_vec_data(struct Vector **vec, u32 data_size) {
     (*vec)->data = malloc(data_size * sizeof(u32));
 
     if ((*vec)->data == NULL) {
-        fprintf(stderr,
-            "Error when allocating memory to data section of a `Vector` struct\n");
-
+        fprintf(
+            stderr,
+            "Error: alloc memory to data section of a `Vector` struct failed\n"
+        );
         return false;
     }
 
@@ -22,20 +22,6 @@ static bool _alloc_vec_data(struct Vector **vec, u32 data_size) {
     memset((*vec)->data, 0, data_size);
 
     return true;
-}
-
-static void _clean_up_allocs(u32 items, void *ptr, ...) {
-    va_list args;
-
-    free(ptr);
-    va_start(args, ptr);
-
-    for (u32 i=1; i<items; ++i) {
-        void *p = va_arg(args, void *);
-        if (p != NULL) free(p);
-    }
-
-    va_end(args);
 }
 
 
@@ -63,7 +49,7 @@ static u32 _compute_escape_time(CPoint *c, CPoint *z, fractal_config *cfg) {
     }
 
     if (cfg->color_algorithm == 0) {
-        // continuous coloring: make few further iterations
+        // Continuous coloring: make few further iterations
         for (u32 j=0; j<4; ++j) {
             y = 2 * x * y + c->y;
             x = z->x - z->y + c->x;
@@ -92,13 +78,13 @@ static void* _cont_color_worker(void *thread_args) {
 
     i32 end_y = args->cfg->height;
     if (args->start_y == 0) {
-        // thread 1, fix end boundary
+        // Thread 1: fix end boundary
         end_y /= 2;
     }
 
     for (i32 y=args->start_y; y<end_y; ++y) {
         for (i32 x=0; x<args->cfg->width; ++x) {
-            // scale x to [-2, 0.5], y to [-1, 1]
+            // Scale x to [-2, 0.5], y to [-1, 1]
             f64 x_scaled = (x - (4 * args->cfg->width / 5)) * 5.0 / (2.0 * args->cfg->width);
             f64 y_scaled = (y - args->cfg->height / 2) * 2.0 / args->cfg->height;
 
@@ -123,7 +109,7 @@ static void* _cont_color_worker(void *thread_args) {
                 color_bits.blue = (end_color.blue - start_color.blue) * iter_p + start_color.blue;
             }
 
-            // threads never write to the same memory, thus no mutex here
+            // Threads never write to the same memory
             bitmap_set_pixel(args->bitmap, &color_bits, x, y);
         }
     }
@@ -131,7 +117,7 @@ static void* _cont_color_worker(void *thread_args) {
     return NULL;
 }
 
-static void _compute_with_continuous_coloring(fractal_config *cfg, struct BitmapData *bitmap) {
+static bool _compute_with_continuous_coloring(fractal_config *cfg, struct BitmapData *bitmap) {
     pthread_t thread_1, thread_2;
 
     pthread_create(&thread_1, NULL, _cont_color_worker,
@@ -142,6 +128,8 @@ static void _compute_with_continuous_coloring(fractal_config *cfg, struct Bitmap
 
     pthread_join(thread_1, NULL);
     pthread_join(thread_2, NULL);
+
+    return true;
 }
 
 
@@ -159,13 +147,13 @@ static void* _hist_worker(void *thread_args) {
 
     i32 end_y = args->cfg->height;
     if (args->start_y == 0) {
-        // thread 1, fix end boundary
+        // Thread 1: fix end boundary
         end_y /= 2;
     }
 
     for (i32 y=args->start_y; y<end_y; ++y) {
         for (i32 x=0; x<args->cfg->width; ++x) {
-            // scale x to [-2, 0.5], y to [-1,1]
+            // Scale x to [-2, 0.5], y to [-1,1]
             f64 x_scaled = (x - (4 * args->cfg->width / 5)) * 5.0 / (2.0 * args->cfg->width);
             f64 y_scaled = (y - args->cfg->height / 2) * 2.0 / args->cfg->height;
 
@@ -250,30 +238,36 @@ static void _render_coloring_hist(
 
 }
 
-static void _compute_with_histogram_coloring(fractal_config *cfg, struct BitmapData *bitmap) {
+static bool _compute_with_histogram_coloring(fractal_config *cfg, struct BitmapData *bitmap) {
     u32 const elems_iters = cfg->height * cfg->width;
     struct Vector *iters_per_pixel = malloc(sizeof *iters_per_pixel);
+
+    if (iters_per_pixel == NULL || !_alloc_vec_data(&iters_per_pixel, elems_iters)) {
+        fprintf(stderr, "Error: alloc memory for struct `iters_per_pixel` failed\n");
+        free(iters_per_pixel);
+        return false;
+    }
 
     u32 const elems_freq = cfg->max_iters;
     struct Vector *frequency = malloc(sizeof *frequency);
 
-    if (iters_per_pixel == NULL || frequency == NULL) {
-        fprintf(stderr,
-            "Error when allocating memory for structs `iters_per_pixel` and `frequency`\n");
-        goto cleanup;
+    if (frequency == NULL || !_alloc_vec_data(&frequency, elems_freq)) {
+        fprintf(stderr, "Error: alloc memory for struct `frequency` failed\n");
+        free(frequency);
+        free(iters_per_pixel->data);
+        free(iters_per_pixel);
+        return false;
     }
-    if (!_alloc_vec_data(&iters_per_pixel, elems_iters)) {
-        goto cleanup;
-    }
-    if (!_alloc_vec_data(&frequency, elems_freq)) {
-        goto cleanup;
-    }
-
+    
     _compute_mandelbrot_set_hist(cfg, iters_per_pixel, frequency);
     _render_coloring_hist(cfg, iters_per_pixel, frequency, bitmap);
 
-    cleanup:
-        _clean_up_allocs(2, iters_per_pixel, frequency);
+    free(iters_per_pixel->data);
+    free(iters_per_pixel);
+    free(frequency->data);
+    free(frequency);
+
+    return true;
 }
 
 
@@ -282,13 +276,13 @@ static void* _simple_worker(void *thread_args) {
 
     i32 end_y = args->cfg->height;
     if (args->start_y == 0) {
-        // thread 1, fix end boundary
+        // Thread 1: fix end boundary
         end_y /= 2;
     }
 
     for (i32 y=args->start_y; y<end_y; ++y) {
         for (i32 x=0; x<args->cfg->width; ++x) {
-            // scale x to [-2, 0.5], y to [-1,1]
+            // Scale x to [-2, 0.5], y to [-1,1]
             f64 x_scaled = (x - (4 * args->cfg->width / 5)) * 5.0 / (2.0 * args->cfg->width);
             f64 y_scaled = (y - args->cfg->height / 2) * 2.0 / args->cfg->height;
 
@@ -309,7 +303,7 @@ static void* _simple_worker(void *thread_args) {
                 color_bits.blue = 96;
             }
 
-            // threads never write to the same memory, thus no mutex here
+            // Threads never write to the same memory
             bitmap_set_pixel(args->bitmap, &color_bits, x, y);
         }
     }
@@ -317,7 +311,7 @@ static void* _simple_worker(void *thread_args) {
     return NULL;
 }
 
-static void _compute_with_simple_coloring(fractal_config *cfg, struct BitmapData *bitmap) {
+static bool _compute_with_simple_coloring(fractal_config *cfg, struct BitmapData *bitmap) {
     pthread_t thread_1, thread_2;
 
     pthread_create(&thread_1, NULL, _simple_worker,
@@ -328,38 +322,47 @@ static void _compute_with_simple_coloring(fractal_config *cfg, struct BitmapData
 
     pthread_join(thread_1, NULL);
     pthread_join(thread_2, NULL);
+
+    return true;
 }
 
 
-void draw_mandelbrot_fractal(fractal_config *cfg) {
+bool draw_mandelbrot_fractal(fractal_config *cfg) {
     u32 const b_pixels = cfg->width * cfg->height * 3; // 3 bytes for each pixel
     struct BitmapData *bitmap = malloc(sizeof *bitmap + b_pixels * sizeof(u8));
 
     if (bitmap == NULL) {
-        fprintf(stderr, "Error when allocating memory for struct `BitmapData`\n");
-        return;
+        fprintf(stderr, "Error: alloc memory for struct `BitmapData` failed\n");
+        exit(EXIT_FAILURE);
     }
 
     bitmap->height = cfg->height;
     bitmap->width = cfg->width;
     memset(bitmap->pixels, 0, b_pixels);
 
+    bool compute_success = false;
+
     if (cfg->color_algorithm == 0) {
         fprintf(stdout, "drawing fractal with continuous coloring\n");
-        _compute_with_continuous_coloring(cfg, bitmap);
+        compute_success = _compute_with_continuous_coloring(cfg, bitmap);
 
     } else if (cfg->color_algorithm == 1) {
         fprintf(stdout, "drawing fractal with histogram coloring\n");
-        _compute_with_histogram_coloring(cfg, bitmap);
+        compute_success = _compute_with_histogram_coloring(cfg, bitmap);
 
     } else {
-        fprintf(stdout, "drawing the Mandelbrot set in a simple manner\n");
-        _compute_with_simple_coloring(cfg, bitmap);
+        fprintf(stdout, "drawing the Mandelbrot set with simple coloring\n");
+        compute_success = _compute_with_simple_coloring(cfg, bitmap);
     }
 
-    bitmap_write(bitmap, "fractal.bmp");
-
-    fprintf(stdout, "fractal drawn in file `fractal.bmp`\n");
+    if (compute_success && bitmap_write(bitmap, "fractal.bmp")) {
+        fprintf(stdout, "fractal drawn in file `fractal.bmp`\n");
+    } else {
+        fprintf(stderr, "Error: fractal computation or drawning failed\n");
+        compute_success = false;
+    }
 
     free(bitmap);
+
+    return compute_success;
 }

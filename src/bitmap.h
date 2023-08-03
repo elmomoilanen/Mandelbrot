@@ -32,6 +32,6 @@ struct BitmapData {
 };
 
 void bitmap_set_pixel(struct BitmapData *bitmap, RGBbits *color_bits, i32 x, i32 y);
-void bitmap_write(struct BitmapData *bitmap, const char *filename);
+bool bitmap_write(struct BitmapData *bitmap, const char *filename);
 
 #endif // __BITMAP__

@@ -37,5 +37,5 @@ int main(int argc, char **argv) {
     fprintf(stdout, "max iterations: %u\n", cfg.max_iters);
     fprintf(stdout, "escape bound: %u\n", cfg.escape_bound);
 
-    draw_mandelbrot_fractal(&cfg);
+    return draw_mandelbrot_fractal(&cfg) ? EXIT_SUCCESS : EXIT_FAILURE;
 }

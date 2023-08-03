@@ -14,7 +14,7 @@ void bitmap_set_pixel(struct BitmapData *bitmap, RGBbits *color_bits, i32 x, i32
     *(bitmap->pixels + pixel_offset + 2) = color_bits->red;
 }
 
-void bitmap_write(struct BitmapData *bitmap, const char *filename) {
+bool bitmap_write(struct BitmapData *bitmap, const char *filename) {
     struct BitmapHeader header = {
         .header_field = {'B', 'M'},
         .file_size = 0,
@@ -41,7 +41,7 @@ void bitmap_write(struct BitmapData *bitmap, const char *filename) {
 
     if (file == NULL) {
         fprintf(stderr, "Error when opening file `%s`\n", filename);
-        return;
+        return false;
     }
 
     fwrite(&header, sizeof(struct BitmapHeader), 1, file);
@@ -49,9 +49,12 @@ void bitmap_write(struct BitmapData *bitmap, const char *filename) {
 
     if (fclose(file) != 0) {
         if (errno) {
-            fprintf(stderr, "Error when closing the file `%s`: %s\n", filename, strerror(errno));
+            fprintf(stderr, "Error when closing file `%s`: %s\n", filename, strerror(errno));
         } else {
-            fprintf(stderr, "Unknown error when closing the file `%s`\n", filename);
+            fprintf(stderr, "Unknown error when closing file `%s`\n", filename);
         }
+        return false;
     }
+
+    return true;
 }
