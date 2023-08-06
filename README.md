@@ -41,7 +41,7 @@ There are few restrictions on parameter combinations. The histogram coloring alg
 The next example command illustrates a case where multiple arguments are passed to the executable. It plots the Mandelbrot set on a 1920 x 1080 pixel canvas using the histogram coloring algorithm with a maximum iteration count of 250,000 and a red color palette.
 
 ```bash
-./mandelbrot -a histogram -m 250000 -p red -w 1980 -h 1080
+./mandelbrot -a histogram -m 250000 -p red -w 1920 -h 1080
 ```
 
 The figure below (not to scale) represents a possible result from the previous command
