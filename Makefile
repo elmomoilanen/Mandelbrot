@@ -1,5 +1,5 @@
 CC=gcc
-CFLAGS=-Wall -Wextra -Werror -std=c11 -g -O3
+CFLAGS=-Wall -Wextra -Werror -std=c11 -O3
 
 SRC=src/bitmap.c src/main.c src/mandelbrot.c src/palette.c src/argparser.c
 OBJS=bitmap.o main.o mandelbrot.o palette.o argparser.o
