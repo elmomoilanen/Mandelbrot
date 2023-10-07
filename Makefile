@@ -7,7 +7,7 @@ TARGET=mandelbrot
 
 .PHONY: all clean help
 
-all: $(TARGET)
+all: $(TARGET) clean
 
 $(OBJS): $(SRC)
 	$(CC) $(CFLAGS) -c -Isrc/ $(SRC)
@@ -19,7 +19,7 @@ clean:
 	rm -f $(OBJS)
 
 help:
-	@echo "Available targets:"
-	@echo "  all:       Build executable"
-	@echo "  clean:     Remove object files"
-	@echo "  help:      Display this help message"
+	@echo "Available targets:\n"
+	@echo "all:       Build executable and run clean afterwards"
+	@echo "clean:     Remove object files"
+	@echo "help:      Display this help message"
