@@ -6,9 +6,9 @@ This is a command-line program to draw the Mandelbrot set with various parameter
 
 ## Build ##
 
-This program is expected to work on most common Linux distros and macOS. The program uses the C11 standard and links with math and posix thread libraries.
+This program requires the C11 standard and links with math and posix thread libraries. It is expected to work on most common Linux distros and macOS.
 
-To build the program, run the following command
+To build the program, run
 
 ```bash
 make
