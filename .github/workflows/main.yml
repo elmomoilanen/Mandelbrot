@@ -4,6 +4,9 @@ on:
   push:
     paths-ignore: [ "docs/**" ]
     branches: [ main ]
+  pull_request:
+    paths-ignore: [ "docs/**" ]
+    branches: [ main ]
 
 jobs:
   build:
@@ -35,5 +38,3 @@ jobs:
           --quiet --error-exitcode=1 ./mandelbrot -a histogram -m 100
         valgrind --leak-check=full --show-leak-kinds=all --errors-for-leak-kinds=all \
           --quiet --error-exitcode=1 ./mandelbrot -a simple -m 100
-    - name: Clean
-      run: make clean
